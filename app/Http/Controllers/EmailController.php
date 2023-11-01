@@ -35,22 +35,24 @@ class EmailController extends Controller
         foreach ($emails as $email) {
             SendEmailJob::dispatch($email);
         }
+        return response()->json([
+                'message' => 'Emails are scheduled to be sent successfully',
+            ],
+        );
     }
 
     //  TODO - BONUS: implement list method
-    public function list(Request $request, User $user)
+    public function list(Request $request)
     {
 
-        $apiToken = $request->input('api_token');
         $page = $request->input('page') ?? 1;
         $perPage = $request->input('per_page') ?? 15;
-        $this->validateToken($apiToken, $user->id);
-        /** @var ElasticsearchHelperInterface $elasticsearchHelper */
         $elasticsearchHelper = new ElasticsearchHelper();
-        // TODO: Create implementation for storeEmail and uncomment the following line
         $results = $elasticsearchHelper->listEmails($page, $perPage);
-        return response()->json($results);
-
+        return response()->json([
+            'message' => 'Emails are listed successfully',
+            'data' => $results,
+        ]);
     }
 
     public function validateToken($api_token, $user_id)

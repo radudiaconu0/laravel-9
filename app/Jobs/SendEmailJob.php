@@ -18,7 +18,9 @@ use Illuminate\Support\Facades\Mail;
 class SendEmailJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     public $email;
+
     /**
      * Create a new job instance.
      *
@@ -38,14 +40,14 @@ class SendEmailJob implements ShouldQueue
     public function handle()
     {
         /** @var ElasticsearchHelperInterface $elasticsearchHelper */
-        $elasticsearchHelper = new ElasticsearchHelper();
+        $elasticsearchHelper = app()->make(ElasticsearchHelperInterface::class);
         // TODO: Create implementation for storeEmail and uncomment the following line
         $email = $elasticsearchHelper->storeEmail($this->email['body'], $this->email['subject'], $this->email['email']);
 
         /** @var RedisHelperInterface $redisHelper */
-        $redisHelper = new RedisHelper();
+        $redisHelper = app()->make(RedisHelperInterface::class);
         // TODO: Create implementation for storeRecentMessage and uncomment the following line
-        $redisHelper->storeRecentMessage($email["_id"], $this->email['subject'], $this->email['body'], $this->email['email']);
+        $redisHelper->storeRecentMessage($email["_id"], $this->email['subject'], $this->email['email'], $this->email['body']);
 
         Mail::to($this->email['email'])->send(new MotivationEmail($this->email['subject'], $this->email['body']));
     }

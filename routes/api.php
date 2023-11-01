@@ -23,7 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::middleware('auth:sanctum')->post('/{user}/send', [EmailController::class, 'send']);
-Route::middleware('auth:sanctum')->get('/{user}/list', [EmailController::class, 'list'])->middleware(['auth:sanctum']);
+Route::middleware('auth:sanctum')->get('/list', [EmailController::class, 'list']);
 // auth routes for login and registration
 
 Route::post('/register', [AuthController::class, 'register']);

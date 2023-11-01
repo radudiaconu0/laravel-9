@@ -23,11 +23,12 @@ class ElasticsearchHelper implements ElasticsearchHelperInterface
                 'body' => $messageBody,
                 'subject' => $messageSubject,
                 'to' => $toEmailAddress,
-            ]
+            ],
+
         ];
 
         $response = $this->client->index($params);
-        return $response['_id'];
+        return $response;
     }
 
     public function listEmails(int $page, int $perPage): array
@@ -37,11 +38,6 @@ class ElasticsearchHelper implements ElasticsearchHelperInterface
             'body' => [
                 'from' => ($page - 1) * $perPage,
                 'size' => $perPage,
-                'sort' => [
-                    'created_at' => [
-                        'order' => 'desc'
-                    ]
-                ]
             ]
         ];
 
@@ -56,6 +52,11 @@ class ElasticsearchHelper implements ElasticsearchHelperInterface
             ];
         }
 
-        return $emails;
+        return [
+            'emails' => $emails,
+            'total' => $response['hits']['total']['value'],
+            'page' => $page,
+            'per_page' => $perPage,
+        ];
     }
 }
